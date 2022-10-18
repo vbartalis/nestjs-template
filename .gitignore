@@ -37,3 +37,4 @@ lerna-debug.log*
 # db 
 
 .data/db/*
+!.data/db/dummyfile.txt
