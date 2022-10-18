@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  mariadb:
+    image: bitnami/mariadb:10.7
+    ports:
+      - ${DATABASE_PORT}:3306
+    volumes:
+      - ./.data/db:/bitnami/mariadb
+      # - mariadb_data:/bitnami/mariadb
+    environment:
+      ALLOW_EMPTY_PASSWORD: yes
+      MARIADB_DATABASE: ${DATABASE_NAME}
+      MARIADB_USER: ${DATABASE_USERNAME}
+      MARIADB_PASSWORD: ${DATABASE_PASSWORD}
+      # ALLOW_EMPTY_PASSWORD: yes
+      # MARIADB_DATABASE: name
+      # MARIADB_USER: username
+      # MARIADB_PASSWORD: pwd
+    healthcheck:
+      test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+      interval: 15s
+      timeout: 5s
+      retries: 6
+
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+
+volumes:
+  mariadb_data:
+    driver: local
