@@ -1,27 +1,22 @@
-import { IsNotEmpty } from 'class-validator';
-
-export class CreateUserDto {
-  @IsNotEmpty()
-  readonly username: string;
-
-  @IsNotEmpty()
-  readonly email: string;
-
-  @IsNotEmpty()
-  readonly password: string;
-}
-
-export class LoginUserDto {
-  @IsNotEmpty()
-  readonly email: string;
-
-  @IsNotEmpty()
-  readonly password: string;
-}
+import { Expose } from 'class-transformer';
+import { IsEmail, IsString } from 'class-validator';
 
 export class UpdateUserDto {
+  @IsString()
   readonly username: string;
+  @IsEmail()
   readonly email: string;
-  readonly bio: string;
-  readonly image: string;
+}
+
+export class GetUserDto {
+  @Expose()
+  id: string;
+  @Expose()
+  username: string;
+  @Expose()
+  email: string;
+  @Expose()
+  createdAt: Date;
+  @Expose()
+  updatedAt: Date;
 }

@@ -1,4 +1,4 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
 export class RegisterReqDto {
@@ -14,7 +14,6 @@ export class RegisterReqDto {
   username: string;
 }
 
-@Exclude()
 export class RegisterResDto {
   @Expose()
   email: string;

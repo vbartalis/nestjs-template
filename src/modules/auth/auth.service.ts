@@ -2,7 +2,7 @@
 https://docs.nestjs.com/providers#services
 */
 
-import { UserEntity } from '@modules/user/user.entity';
+import { EUser } from '@modules/user/user.entity';
 import { UserService } from '@modules/user/user.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -21,7 +21,7 @@ export class AuthService {
     if (user) {
       throw new HttpException('Conflict', HttpStatus.CONFLICT);
     }
-    user = new UserEntity();
+    user = new EUser();
     user.username = username;
     user.email = email;
     user.password = password;
@@ -44,10 +44,7 @@ export class AuthService {
   }
 
   // Generate JWT Token
-  private generateToken(user: UserEntity): string {
-    console.log(user);
-    console.log({ id: user.id, email: user.email });
-
+  private generateToken(user: EUser): string {
     return this.jwtService.sign({ id: user.id, email: user.email });
   }
 }

@@ -1,5 +1,5 @@
 import { UserSeed } from '@database/seeds/user.seed';
-import { UserEntity } from '@modules/user/user.entity';
+import { EUser } from '@modules/user/user.entity';
 import * as bcrypt from 'bcryptjs';
 
 import * as datasource from 'src/core/providers/database/mysql/mysql.configuration';
@@ -13,7 +13,7 @@ export class seedUser1666113466103 implements MigrationInterface {
     const pwd = userSeed.password;
     console.log(pwd);
     userSeed.password = this.encodePassword(userSeed.password);
-    await datasource.default.getRepository(UserEntity).save(userSeed);
+    await datasource.default.getRepository(EUser).save(userSeed);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {}

@@ -1,56 +1,51 @@
-/*
-https://docs.nestjs.com/controllers#controllers
-*/
-
 import { JwtAuthGuard } from '@core/auth/jwt-auth.guard';
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthContext } from '@shared/decorators/auth-context.decorator';
-import validationOptions from '@shared/pipes/validation-options';
-import { CreateUserDto, UpdateUserDto } from './user.dto';
-import { UserEntity } from './user.entity';
+import { DtoEntityConverterService } from '@shared/service/dto-entity-converter.service';
+import { GetUserDto, UpdateUserDto } from './user.dto';
 import { UserService } from './user.service';
 
 @ApiBearerAuth()
 @ApiTags('user')
 @Controller()
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private converterService: DtoEntityConverterService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get()
-  async findMe(@AuthContext('userId') userId: string): Promise<UserEntity> {
-    return await this.userService.findOne(userId);
+  @Get('user/')
+  async findMe(@AuthContext('userId') userId: string) {
+    const entity = await this.userService.findOne(userId);
+    const dto = this.converterService.convertToDto(entity, GetUserDto);
+    return dto;
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':userId')
-  async findUser(@Param('userId') userId: string): Promise<UserEntity> {
-    return await this.userService.findOne(userId);
+  @Get('user/:userId')
+  async findUser(@Param('userId') userId: string) {
+    const entity = await this.userService.findOne(userId);
+    return this.converterService.convertToDto(entity, GetUserDto);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('users')
-  async findAll(): Promise<UserEntity[]> {
-    return await this.userService.findAll();
+  @Patch('user/:userId')
+  async update(@Param('userId') userId: string, @Body() userData: UpdateUserDto) {
+    const result = await this.userService.update(userId, userData);
+    return { affected: result.affected };
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':userId')
-  async update(@Param('userId') userId: string, @Body('user') userData: UpdateUserDto) {
-    return await this.userService.update(userId, userData);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @UsePipes(new ValidationPipe(validationOptions))
-  @Post()
-  async create(@Body('user') userData: CreateUserDto) {
-    return this.userService.create(userData);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Delete('/:userId')
+  @Delete('user/:userId')
   async delete(@Param('userId') userId: string) {
-    return await this.userService.delete(userId);
+    const result = await this.userService.delete(userId);
+    return { affected: result.affected };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('users/')
+  async findAll(): Promise<GetUserDto[]> {
+    const entities = await this.userService.findAll();
+    const dtos = this.converterService.convertToDtoArray(entities, GetUserDto);
+    return dtos;
   }
 }

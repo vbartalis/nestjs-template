@@ -4,7 +4,7 @@ import { BeforeInsert, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn,
 import { IUser } from './user.interface';
 
 @Entity('user')
-export class UserEntity implements IUser {
+export class EUser implements IUser {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
